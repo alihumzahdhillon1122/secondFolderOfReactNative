@@ -30,49 +30,7 @@ function GameScreen({ userNumber, onGameOver }) {
         minBoundry = 1;
         maxBoundry = 100;
     }, []);
-    // function nextGuessHandler(direction) {
-    //     if ((direction === 'lower' && curresntGuess < userNumber) ||
-    //         (direction === 'greater' && curresntGuess > userNumber)) {
-    //         Alert.alert(
-    //             'Don’t lie!',
-    //             'You know that this is wrong....',
-    //             [{ text: 'Sorry!', style: 'cancel', }]
-    //         );
-    //         return;
-    //     }
-    //     if (direction === 'lower') {
-    //         maxBoundry = curresntGuess;
-    //     } else {
-    //         minBoundry = curresntGuess + 1;
-    //     }
-    //     const newRndNumber = generateRandomBetween(minBoundry, maxBoundry, curresntGuess);
-    //     setCurrentGuess(newRndNumber);
-    //     setGuessRounds(prevGuessRounds => [newRndNumber, ...prevGuessRounds]);
-    // }
-    // function nextGuessHandler(direction) {
-    //     // directin => 'lower', 'greater'
-    //     if ((direction === 'lower' && curresntGuess < userNumber) ||
-    //         (direction === 'greater' && curresntGuess > userNumber)) {
-    //         Alert.alert(
-    //             'Dont lie!',
-    //             'you know that this is wrong....',
-    //             [{ text: 'sorry!,', style: 'cancel', }]
-    //         );
-    //         return;
-    //     }
-    //     if (direction === 'lower') {
-    //         maxBoundry = curresntGuess;
-    //     } else {
-    //         minBoundry = curresntGuess + 1;
-    //     }
-    //     const newRndNumber = generateRandomBetween(
-    //         1,
-    //         100,
-    //         curresntGuess);
-    //     setCurrentGuess(newRndNumber)
-    //     setGuessRounds(prevGuessRounds => [newRndNumber, ...prevGuessRounds]);
-    //     const guessRoundsListLength = guessRounds.length
-    // };
+    
     function nextGuessHandler(direction) {
         // 'lower' or 'greater'
         if (
@@ -94,8 +52,19 @@ function GameScreen({ userNumber, onGameOver }) {
         }
 
         // Avoid the stack overflow issue by ensuring range is large enough
+        // if (maxBoundry - minBoundry <= 1) {
+        //     Alert.alert("You broke the game!", "No more numbers to guess.");
+        //     return;
+        // }
+
+        // Smooth Feedback to the User:
+        // Provide the user with feedback that the AI can't guess anymore, and they should start a new game:
         if (maxBoundry - minBoundry <= 1) {
-            Alert.alert("You broke the game!", "No more numbers to guess.");
+            Alert.alert(
+                "Hmm...",
+                "Looks like I'm out of guesses. Let's start a new game!",
+                [{ text: 'Okay', onPress: () => onGameOver(guessRounds.length) }]
+            );
             return;
         }
 
@@ -132,16 +101,6 @@ function GameScreen({ userNumber, onGameOver }) {
                 </View>
             </Card>
             <View style={styles.listContainer}>
-                {/* <FlatList
-                    data={guessRounds}
-                    renderItem={({ item, index }) => (
-                        <GuessLogItem
-                            roundNumber={guessRoundsListLength - index}
-                            guess={item}
-                        />
-                    )}
-                    keyExtractor={(item) => item.toString()}
-                /> */}
                 <FlatList
                     data={guessRounds}
                     renderItem={({ item, index }) => (
