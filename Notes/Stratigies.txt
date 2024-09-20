@@ -1,0 +1,113 @@
+                                 Why the Check is Necessary
+The check if (maxBoundry - minBoundry <= 1) ensures that there are enough numbers left to guess. If the range becomes too narrow (e.g., only one possible number), the recursive function generateRandomBetween could get stuck, causing a stack overflow error.
+
+
+                               Alternative Strategies for Better User Experience
+   1 -- Provide a Winning Message:
+
+Instead of showing an alert that the game is broken, you can handle this situation as if the computer has "won" the game by guessing correctly. You can trigger the onGameOver callback with the number of rounds it took.
+         
+         ////////
+         if (maxBoundry - minBoundry <= 1) {
+    onGameOver(guessRounds.length); // Trigger game over with the current number of rounds
+    return;
+}
+////////
+
+
+         2 -- Automatic Guessing:
+
+If there's only one possible number left to guess, directly set that number as the current guess and check if it matches the user's number.
+
+/////
+   if (maxBoundry - minBoundry <= 1) {
+    const finalGuess = minBoundry; // or maxBoundry, since they're the same
+    setCurrentGuess(finalGuess);
+    setGuessRounds(prevGuessRounds => [finalGuess, ...prevGuessRounds]);
+
+    if (finalGuess === userNumber) {
+        onGameOver(guessRounds.length); // End the game
+    }
+    return;
+}
+//////
+
+
+3 -- Disable the Button
+If you notice that there are no valid moves left, disable the buttons and give the user some feedback like "No more guesses left."
+
+//////
+const disableButtons = maxBoundry - minBoundry <= 1;
+
+// In the JSX:
+<PrimaryButton onPress={disableButtons ? null : nextGuessHandler.bind(this, 'lower')} disabled={disableButtons}>
+    <Ionicons name="remove-circle" size={24} color={disableButtons ? 'gray' : 'white'} />
+</PrimaryButton>
+<PrimaryButton onPress={disableButtons ? null : nextGuessHandler.bind(this, 'greater')} disabled={disableButtons}>
+    <Ionicons name="add-circle" size={24} color={disableButtons ? 'gray' : 'white'} />
+</PrimaryButton>
+////////
+
+ 
+   4-- Smooth Feedback to the User:
+    Provide the user with feedback that the AI can't guess anymore, and they should start a new game:
+
+    if (maxBoundry - minBoundry <= 1) {
+    Alert.alert(
+        "Hmm...",
+        "Looks like I'm out of guesses. Let's start a new game!",
+        [{ text: 'Okay', onPress: () => onGameOver(guessRounds.length) }]
+    );
+    return;
+}
+
+
+
+                         Implementing a Friendly Approach
+
+
+
+Here’s how you might integrate these ideas into your nextGuessHandler:
+
+function nextGuessHandler(direction) {
+    if (
+        (direction === 'lower' && curresntGuess < userNumber) ||
+        (direction === 'greater' && curresntGuess > userNumber)
+    ) {
+        Alert.alert(
+            "Don't lie!",
+            "You know that this is wrong...",
+            [{ text: 'Sorry!', style: 'cancel' }]
+        );
+        return;
+    }
+
+    if (direction === 'lower') {
+        maxBoundry = curresntGuess; 
+    } else {
+        minBoundry = curresntGuess + 1; 
+    }
+
+    if (maxBoundry - minBoundry <= 1) {
+        // Instead of breaking the game, we let the user know and end the game smoothly
+        Alert.alert(
+            "That's all I can guess!",
+            `I guess your number is ${minBoundry}. Let's start a new game!`,
+            [{ text: 'Start New Game', onPress: () => onGameOver(guessRounds.length) }]
+        );
+        return;
+    }
+
+    const newRndNumber = generateRandomBetween(minBoundry, maxBoundry, curresntGuess);
+    setCurrentGuess(newRndNumber);
+    setGuessRounds(prevGuessRounds => [newRndNumber, ...prevGuessRounds]);
+}
+
+
+
+
+Summary
+Avoid Using Direct Error Messages: Instead of indicating the game is broken, provide a smoother user experience.
+Handle Edge Cases Gracefully: Consider situations where guessing may become impossible and handle them with a smooth transition.
+Direct Feedback: If no more guesses are possible, let the user know in a friendly manner and offer options like starting a new game.
+This way, you maintain the game's flow and avoid breaking the user experience.
