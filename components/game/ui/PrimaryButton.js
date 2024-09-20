@@ -1,22 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 import React from 'react'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const PrimaryButton = ({ children, onWhenPress}) => {                      // here is onWhenPress is a prop
     return (
         <View style={styles.buttonOuterContainer}>
@@ -30,29 +13,6 @@ const PrimaryButton = ({ children, onWhenPress}) => {                      // he
 };
 
 export default PrimaryButton;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const styles = StyleSheet.create({
     buttonOuterContainer: {
