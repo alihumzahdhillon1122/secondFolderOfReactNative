@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 // import AppLoading from 'expo-app-loading';    // expo-lapp-loading is deprecated so we r using splash screen
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 
 
 
@@ -64,17 +65,20 @@ const App = () => {
       onStartNewGame={startNewGameHandler} />
   }
   return (
-    <LinearGradient style={styles.rootScreen} colors={['#72063c', '#fff']}>
-      <ImageBackground
-        source={require('./assets/images/image.jpg')}
-        resizeMode='cover'
-        style={styles.rootScreen}
-        imageStyle={styles.backGroundImage}>
-        <SafeAreaView style={styles.rootScreen}>
-          {screen}
-        </SafeAreaView>
-      </ImageBackground>
-    </LinearGradient>
+    <>
+      <StatusBar style='light' />
+      <LinearGradient style={styles.rootScreen} colors={['#72063c', '#fff']}>
+        <ImageBackground
+          source={require('./assets/images/image.jpg')}
+          resizeMode='cover'
+          style={styles.rootScreen}
+          imageStyle={styles.backGroundImage}>
+          <SafeAreaView style={styles.rootScreen}>
+            {screen}
+          </SafeAreaView>
+        </ImageBackground>
+      </LinearGradient>
+    </>
   );
 };
 export default App;

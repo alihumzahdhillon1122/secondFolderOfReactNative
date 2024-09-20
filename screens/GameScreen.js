@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Alert, FlatList } from 'react-native'
+import { StyleSheet, Text, View, Alert, FlatList, useWindowDimensions } from 'react-native'
 import Title from '../components/game/ui/Title';
 import { useEffect, useState } from 'react';
 import NubmerContainer from '../components/game/NumberConatiner';
@@ -21,6 +21,8 @@ function GameScreen({ userNumber, onGameOver }) {
     const initialGuess = generateRandomBetween(minBoundry, maxBoundry, userNumber);
     const [guessRounds, setGuessRounds] = useState([initialGuess]);
     const [curresntGuess, setCurrentGuess] = useState(initialGuess);
+    const { width, height } = useWindowDimensions();
+
     useEffect(() => {
         if (curresntGuess === userNumber) {
             onGameOver(guessRounds.length);
@@ -30,7 +32,7 @@ function GameScreen({ userNumber, onGameOver }) {
         minBoundry = 1;
         maxBoundry = 100;
     }, []);
-    
+
     function nextGuessHandler(direction) {
         // 'lower' or 'greater'
         if (
@@ -79,27 +81,51 @@ function GameScreen({ userNumber, onGameOver }) {
     }
 
     const guessRoundsListLength = guessRounds.length; // Move this here
-    return (
-        <View style={styles.screen}>
-            <Title>Opponent's Guess</Title>
-            <NubmerContainer>{curresntGuess}</NubmerContainer>
-            <Card>
-                <InstructionText style={styles.InstructionText}>
-                    Higher or lower
-                </InstructionText>
-                <View style={styles.buttonsContainer}>
+
+    let content = (<>
+        <NubmerContainer>{curresntGuess}</NubmerContainer>
+        <Card>
+            <InstructionText style={styles.InstructionText}>
+                Higher or lower
+            </InstructionText>
+            <View style={styles.buttonsContainer}>
+                <View style={styles.buttonContainer}>
+                    <PrimaryButton onWhenPress={nextGuessHandler.bind(this, 'lower')}>
+                        <Ionicons name="remove-circle" size={24} color="white" />
+                    </PrimaryButton>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <PrimaryButton onWhenPress={nextGuessHandler.bind(this, 'greater')}>
+                        <Ionicons name="add-circle" size={24} color="white" />
+                    </PrimaryButton>
+                </View>
+            </View>
+        </Card>
+    </>
+    );
+    if (width > 500) {
+        content =
+            <>
+
+                <View style={styles.buttonContainerWide}>
                     <View style={styles.buttonContainer}>
                         <PrimaryButton onWhenPress={nextGuessHandler.bind(this, 'lower')}>
                             <Ionicons name="remove-circle" size={24} color="white" />
                         </PrimaryButton>
                     </View>
+                    <NubmerContainer>{curresntGuess}</NubmerContainer>
                     <View style={styles.buttonContainer}>
                         <PrimaryButton onWhenPress={nextGuessHandler.bind(this, 'greater')}>
                             <Ionicons name="add-circle" size={24} color="white" />
                         </PrimaryButton>
                     </View>
                 </View>
-            </Card>
+            </>
+    }
+    return (
+        <View style={styles.screen}>
+            <Title>Opponent's Guess</Title>
+            {content}
             <View style={styles.listContainer}>
                 <FlatList
                     data={guessRounds}
@@ -122,6 +148,7 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         padding: 24,
+        alignItems: 'center',
     },
     InstructionText: {
         marginBottom: 12,
@@ -132,9 +159,14 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flex: 1,
     },
+    buttonContainerWide: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
     listContainer: {
         flex: 1,
         padding: 16,
+        paddingVertical:10
     },
 });
 

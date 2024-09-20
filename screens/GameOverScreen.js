@@ -1,31 +1,49 @@
-import { Text, View, Image, StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet, ScrollView, useWindowDimensions } from 'react-native';
 import Title from '../components/game/ui/Title';
 import PrimaryButton from '../components/game/ui/PrimaryButton';
 
-
-
-function GameOverScreen({roundsNumber, userNumber, onStartNewGame}) {
+function GameOverScreen({ roundsNumber, userNumber, onStartNewGame }) {
+    const { width, height } = useWindowDimensions();
+    let imageSize = 250;
+    if (width < 380) {
+        imageSize = 150;
+    };
+    if (height < 400) {
+        imageSize = 80;
+    };
+    const imageStyle = {
+        width: imageSize,
+        height: imageSize,
+        borderRadius: imageSize / 2
+    }
     return (
-        <View style={styles.rootConatiner}>
-            <Title>Game Over</Title>
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={require('../assets/images/success3Image.jpg')} />
+        <ScrollView style={styles.screen}>
+            <View style={styles.rootConatiner}>
+                <Title>Game Over</Title>
+                <View style={[styles.imageContainer, imageStyle]}>
+                    <Image style={styles.image} source={require('../assets/images/success3Image.jpg')} />
+                </View>
+                <View>
+                    <Text style={styles.summaryText}>
+                        Your Phone Needed
+                        <Text style={styles.highlight}> {roundsNumber} </Text>
+                        rounds to guess the Number
+                        <Text style={styles.highlight}> {userNumber} </Text>
+                    </Text>
+                    <PrimaryButton onWhenPress={onStartNewGame}>Start New Game</PrimaryButton>
+                </View>
             </View>
-            <View>
-                <Text style={styles.summaryText}>
-                    Your Phone Needed 
-                    <Text style={styles.highlight}> {roundsNumber} </Text>
-                    rounds to guess the Number 
-                    <Text style={styles.highlight}> {userNumber} </Text>
-                </Text>
-                <PrimaryButton onWhenPress={onStartNewGame}>Start New Game</PrimaryButton>
-            </View>
-        </View>
+        </ScrollView>
     )
 };
 export default GameOverScreen;
 
+// const deviceWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
+    screen:{
+        flex:1
+    },
     rootConatiner: {
         flex: 1,
         padding: 24,
@@ -33,13 +51,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     imageContainer: {
-        wieth: 250,
-        height: 250,
-        borderRadius: 125,
+        // wieth: deviceWidth < 380 ? 150 : 250,
+        // height: deviceWidth < 380 ? 150 : 250,
+        // borderRadius: deviceWidth < 380 ? 75 : 150,
         borderWidth: 3,
         borderColor: 'white',
         overflow: 'hidden',
-        margin: 36,
+        margin: 25,
     },
     image: {
         width: 250,
@@ -47,9 +65,9 @@ const styles = StyleSheet.create({
     },
     summaryText: {
         fontFamily: 'open-sans',
-        fontSize:24,
-        textAlign:'center',
-        marginVertical:24,
+        fontSize: 24,
+        textAlign: 'center',
+        marginVertical: 24,
 
     },
     highlight: {
